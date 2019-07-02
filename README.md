@@ -17,6 +17,8 @@ Der ESP8266 verbindet sich, sofern bereits konfiguriert, mit dem bekannten WLAN-
 
 Sollte keines konfiguriert sein, wird dank WiFiManager ein WLAN geöffnet, das automatisch die Credentials abfragt.
 
+Die Zugangsdaten zu diesem AccessPoint sind in der mower.ino hart kodiert, sollten also vor dem Flashen geändert werden.
+
 Mögliche Kommandos an den (einfachen) Webserver:
 
 Mähen starten: `http://IPvomESP/?pressStart=1`
