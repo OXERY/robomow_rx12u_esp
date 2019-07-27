@@ -11,7 +11,7 @@
 //Global variables
 #define GoPin 3
 #define StopPin 4
-#define WEBSRVPORT 8080 //not 80, because captive portal could use this port
+#define WEBSRVPORT 80
 bool running = false;
 //Fallback WiFi AP credentials
 char wifiap[] = "Meow";
@@ -24,14 +24,14 @@ ESP8266WebServer server(WEBSRVPORT);
 void pressButton(bool go) {
   if (go) {
     Serial.println("Go go go!");
-    digitalWrite(GoPin, LOW);
-    delay(600);
     digitalWrite(GoPin, HIGH);
+    delay(600);
+    digitalWrite(GoPin, LOW);
   } else {
     Serial.println("Stopping. Narf.");
-    digitalWrite(StopPin, LOW);
-    delay(600);
     digitalWrite(StopPin, HIGH);
+    delay(600);
+    digitalWrite(StopPin, LOW);
   }
 }
 
@@ -50,6 +50,9 @@ void EventIndex() {
       server.sendHeader("Cache-Control", "no-cache");
       server.send(200, "text/plain", "Please use one of the following parameters: ?pressStart=1 or ?pressStop=1");
     }
+  } else {
+      server.sendHeader("Cache-Control", "no-cache");
+      server.send(200, "text/plain", "Please use one of the following parameters: ?pressStart=1 or ?pressStop=1");
   }
 }
 
@@ -58,15 +61,18 @@ void EventNotFound() {
 }
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
   Serial.begin(115200);
   pinMode(GoPin, OUTPUT);
   pinMode(StopPin, OUTPUT);
-  digitalWrite(GoPin, HIGH);
-  digitalWrite(StopPin, HIGH);
+  digitalWrite(GoPin, LOW);
+  digitalWrite(StopPin, LOW);
   WiFiManager wifiManager;
   //wifiManager.resetSettings(); //reset WiFi settings
   wifiManager.autoConnect(wifiap, wifipw);
   Serial.println("Connected...starting Webserver");
+  digitalWrite(LED_BUILTIN, HIGH);
   server.on("/", EventIndex);
   server.onNotFound(EventNotFound);
   server.begin();
